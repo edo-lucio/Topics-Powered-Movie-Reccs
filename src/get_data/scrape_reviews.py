@@ -95,7 +95,7 @@ def collect_movie_reviews(title, year, id, number_of_reviews):
     while len(reviews) < number_of_reviews:
         url = format_url(title_name, release_date, page_number)
         new_reviews = []
-        
+
         try:
             new_reviews = scrape_review(url)
             reviews += new_reviews
@@ -145,6 +145,5 @@ if __name__ == "__main__":
     movies = pd.read_csv(MOVIES_PATH)
     movies = movies.sample(frac=1)
     movies = movies[['title', 'year', 'id']].drop_duplicates()
-    movies = movies[movies["title"] == "Sergeant Mike"]
 
     reviews = update_reviews(movies)
