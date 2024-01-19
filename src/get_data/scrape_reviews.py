@@ -145,6 +145,5 @@ if __name__ == "__main__":
     movies = pd.read_csv(MOVIES_PATH)
     movies = movies.sample(frac=1)
     movies = movies[['title', 'year', 'id']].drop_duplicates()
-    movies = movies[movies["title"] == "Scarface"]
 
     reviews = update_reviews(movies)
