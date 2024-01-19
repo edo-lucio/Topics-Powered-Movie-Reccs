@@ -43,11 +43,15 @@ def scrape_review(url):
     response = requests.get(url)
     
     if response.status_code == 200:
-        page = BeautifulSoup(response.text, "html.parser")
-        data = page.find("section", class_= "viewings-list")
-        data = data.find_all("li", class_= "film-detail")
-        reviews = []
 
+        try: 
+            page = BeautifulSoup(response.text, "html.parser")
+            data = page.find("section", class_= "viewings-list")
+            data = data.find_all("li", class_= "film-detail")
+            reviews = []
+        except:
+            raise Exception("No schema")
+            
         for item in data:
             review = {}
             details = item.find("div", {"class": ["film-detail-content"], })
@@ -90,14 +94,20 @@ def collect_movie_reviews(title, year, id, number_of_reviews):
 
     while len(reviews) < number_of_reviews:
         url = format_url(title_name, release_date, page_number)
-
+        new_reviews = []
+        
         try:
             new_reviews = scrape_review(url)
             reviews += new_reviews
-        except:
-            url = format_url(title=title_name, page_number=page_number)
-            new_reviews = scrape_review(url)
-            reviews += new_reviews
+        except Exception as e:
+
+            if e == "404":
+                url = format_url(title=title_name, page_number=page_number)
+                new_reviews = scrape_review(url)
+                reviews += new_reviews
+
+            elif e == "No schema":
+                continue
 
         if len(new_reviews) < 12: # max number of reviews per page
             break
@@ -135,5 +145,6 @@ if __name__ == "__main__":
     movies = pd.read_csv(MOVIES_PATH)
     movies = movies.sample(frac=1)
     movies = movies[['title', 'year', 'id']].drop_duplicates()
+    movies = movies[movies["title"] == "Sergeant Mike"]
 
     reviews = update_reviews(movies)
