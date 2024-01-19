@@ -41,7 +41,7 @@ def send_request(url):
 def scrape_review(url):
     time.sleep(randint(1, 4))
     response = requests.get(url)
-    
+
     if response.status_code == 200:
 
         try: 
@@ -87,7 +87,7 @@ def collect_movie_reviews(title, year, id, number_of_reviews):
     logger.info(f"Collecting { number_of_reviews } reviews from { title } { year }")
 
     reviews = []
-    page_number = 0
+    page_number = 1
 
     title_name = title.lower().translate(str.maketrans('', '', s.punctuation)).replace(" ", "-")
     release_date = f"-{year}"
@@ -95,7 +95,7 @@ def collect_movie_reviews(title, year, id, number_of_reviews):
     while len(reviews) < number_of_reviews:
         url = format_url(title_name, release_date, page_number)
         new_reviews = []
-
+        
         try:
             new_reviews = scrape_review(url)
             reviews += new_reviews
@@ -145,5 +145,6 @@ if __name__ == "__main__":
     movies = pd.read_csv(MOVIES_PATH)
     movies = movies.sample(frac=1)
     movies = movies[['title', 'year', 'id']].drop_duplicates()
+    movies = movies[movies["title"] == "Scarface"]
 
     reviews = update_reviews(movies)
