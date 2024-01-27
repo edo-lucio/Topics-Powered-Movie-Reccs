@@ -57,8 +57,11 @@ def get_nearest_words(input_words):
     knn_model = NearestNeighbors(n_neighbors=k_neighbors, metric='cosine')
     knn_model.fit(word2vec_model.vectors)
 
-    distances, indices = knn_model.kneighbors(input_vectors)
-    nearest_words = []
+    try: 
+        distances, indices = knn_model.kneighbors(input_vectors)
+        nearest_words = []
+    except: 
+        raise(Exception("error"))
 
     for i, input_word in enumerate(input_words):
         for j, idx in enumerate(indices[i]):

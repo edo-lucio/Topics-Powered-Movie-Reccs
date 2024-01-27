@@ -27,8 +27,12 @@ def handle_user_input(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(f'a movie with {update.message.text} ? let me think about it')
     s = Score(movies, topics)
 
-    reccomendations = s.top_k_similiar_movies(user_input, 12)
-    update.message.reply_text('this is what you get:\n{}'.format('\n'.join(reccomendations)))
+    try:
+        reccomendations = s.top_k_similiar_movies(user_input, 12)
+        update.message.reply_text('this is what you get:\n{}'.format('\n'.join(reccomendations)))
+    except: 
+        update.message.reply_text('no movies with such words :(\n')
+
         
 def main() -> None:
     updater = Updater(TOKEN)
